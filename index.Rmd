@@ -72,11 +72,6 @@ library(caret); library(randomForest);
 
 Actually, lib randomForest will be loaded automaticlly when using "rf" as the method to train().
 
-<!-- 
-**consider to use PCA **
-
-**consider remove highly correlated covariates (ref2, ref5) **
--->
 
 <br/>
 
@@ -97,12 +92,8 @@ trainControl <- trainControl(method = "cv", number = 10)
 
 According to the performance of different CPUs, The procedure may need several minutes/hours to build the model. 
 
-```{ rf}
+```{r rf}
 modFit <- train(classe ~ ., data = trainingClean, method = "rf", trControl = trainControl)
-```
-
-```{r echo=FALSE}
-load("H:\\Dropbox\\PML\\project\\modFit_with_10folds_CrossValidation.Rdata") 
 ```
 
 **Let's check the model**

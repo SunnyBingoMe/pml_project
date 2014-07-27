@@ -116,7 +116,7 @@ trainingClean &lt;- subset(training, new_window == &quot;no&quot;, select = c(us
 <pre class="r"><code>trainControl &lt;- trainControl(method = &quot;cv&quot;, number = 10)</code></pre>
 <p><strong>Then build a Model</strong></p>
 <p>According to the performance of different CPUs, The procedure may need several minutes/hours to build the model.</p>
-<p><code>{ rf} modFit &lt;- train(classe ~ ., data = trainingClean, method = &quot;rf&quot;, trControl = trainControl)</code></p>
+<pre class="r"><code>modFit &lt;- train(classe ~ ., data = trainingClean, method = &quot;rf&quot;, trControl = trainControl)</code></pre>
 <p><strong>Let’s check the model</strong></p>
 <pre class="r"><code>modFit; </code></pre>
 <pre><code>## Random Forest 
