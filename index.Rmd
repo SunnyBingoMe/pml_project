@@ -33,7 +33,7 @@ Preparing Environment
 **Setting working directory & seed**
 
 ```{r env, echo=TRUE}
-setwd("H:/Dropbox/PML/project");
+setwd("C:/PML/project");
 load("Random.seed.Rdata")
 ```
 By the way, it would be better if I could remember what seed is set. So set.seed() could be used, which is easier to reset the ".Random.seed".
