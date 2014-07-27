@@ -1,0 +1,163 @@
+
+---
+output: html_document
+---
+<center>
+
+Practical Machine Learning Project
+===================================
+© SunnyBingoMe
+
+Saturday, July 16, 2014
+</center> 
+
+<!-- 
+**consider change = to <- **
+-->
+
+
+Preface & Background
+------------------------------
+
+To ease the workload of reviewers, I will try to use as less words as possible.
+
+The goal is to use labeled data to "predict the manner in which they did the exercise". That is, a supervised learning & predicting process. According to the training data, there are five different manners (the "classe" column). So classification is the first choice instead of regression. Here, to improve the accuracy, Random Forest is used to build the model.
+
+The data for the project is from: <http://groupware.les.inf.puc-rio.br/har>.
+
+
+Preparing Environment
+-----------------------------------------------------
+
+Setting working directory & seed
+
+```{r env, echo=TRUE}
+setwd("H:/Dropbox/PML/project");
+set.seed(2014);
+```
+
+Loading data
+
+```{ load}
+training = read.csv('pml-training.csv')
+testing = read.csv('pml-testing.csv')
+```
+
+Preprocessing
+-----------------------------------------------------
+
+Checking data summary 
+
+```{ summary}
+summary(training); summary(testing);
+
+```
+
+Hee, only useful factors according to the summary of testing data will be kept. The process gets rid of "NA"" columns in testing data. Besides, I remove useless data for prediction such as index number ("X") and timestamps. This procedure is done for both training and testing data. 
+
+(not sure if user_name is useful) 
+
+```{ clean}
+testingClean <- subset(testing, new_window == "no", select = c(user_name, num_window:total_accel_belt, gyros_belt_x:total_accel_arm, gyros_arm_x:magnet_arm_z, roll_dumbbell:yaw_dumbbell, total_accel_dumbbell, gyros_dumbbell_x:yaw_forearm, total_accel_forearm, gyros_forearm_x:magnet_forearm_z))
+
+trainingClean <- subset(training, new_window == "no", select = c(user_name, num_window:total_accel_belt, gyros_belt_x:total_accel_arm, gyros_arm_x:magnet_arm_z, roll_dumbbell:yaw_dumbbell, total_accel_dumbbell, gyros_dumbbell_x:yaw_forearm, total_accel_forearm, gyros_forearm_x:magnet_forearm_z, classe))
+```
+
+```{r lib}
+library(caret); library(randomForest);
+```
+
+Actually, lib randomForest will be loaded automaticlly when using "rf" as the method to train().
+
+<!-- 
+**consider to use PCA **
+
+**consider remove highly correlated covariates (ref2, ref5) **
+-->
+
+
+Modelling
+----------
+
+**To use Cross validation**
+
+The trainControl() is needed to use cross validation in train(). The "number" means how many folds should be used in the "cv" method.
+
+```{r trainControl}
+trainControl <- trainControl(method = "cv", number = 10)
+```
+
+**Then build a Model**
+
+According to the performance of different CPUs, The procedure may need several minutes to build the model. 
+
+```{ rf}
+modFit <- train(classe ~ ., data = trainingClean, method = "rf", trControl = trainControl)
+modFit; summary(modFit)
+```
+
+**Expected out-of-sample error**
+
+Using confusionMatrix() from caret, the mis-classification could be seen. 
+
+```{ confusion}
+confusionMatrix(pred, pml.test.training$classe)
+```
+
+
+From the result of cross validation, we can see that the accuracy is .... According to this result, the out-of-sample error should be around ... .
+
+
+
+Predicting
+------------------
+
+The last step is to predict the 20 test cases. And the function pml_write_files() is used to generate files for each case. 
+
+```{ pred20}
+pred20 <- data.frame(predict(modFit, testingClean))
+pred20
+pml_write_files = function(x) {
+    n = length(x)
+    for (i in 1:n) {
+        filename = paste0("problem_id_", i, ".txt")
+        write.table(x[i], file = filename, quote = FALSE, row.names = FALSE, 
+            col.names = FALSE)
+    }
+}
+pml_write_files(pred20)
+
+```
+
+Discussion & Choices
+-----------------------
+
+**Parameters**
+
+**Models**
+
+// **Validation**
+
+
+
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=F}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
